@@ -1424,4 +1424,13 @@ using a fortran linker.
   </SLIBS>
 </compiler>
 
+<compiler MACH="marvin">
+   <NETCDF_C_PATH>/mnt/lustre/software/netcdf/4.8.1/gcc/9.1.0</NETCDF_C_PATH>
+   <NETCDF_FORTRAN_PATH>/mnt/lustre/software/netcdf-fortran/4.5.4/gcc/9.1.0</NETCDF_FORTRAN_PATH>
+   <SLIBS>
+     <append>$SHELL{${NETCDF_C_PATH}/bin/nc-config --flibs}</append>
+     <append>$SHELL{${NETCDF_FORTRAN_PATH}/bin/nf-config --flibs}</append>
+   </SLIBS>
+</compiler>
+	
 </config_compilers>
