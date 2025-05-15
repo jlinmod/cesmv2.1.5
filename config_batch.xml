@@ -711,4 +711,11 @@
       <queue walltimemin="04:00" walltimemax="08:00">p_long</queue>
     </queues>
   </batch_system>
+
+   <batch_system MACH="marvin" type="slurm" >
+  <batch_submit>sbatch</batch_submit>
+   <queues>
+    <queue walltimemax="48:00:00" default="true">default</queue>
+   </queues>
+  </batch_system>
 </config_batch>
