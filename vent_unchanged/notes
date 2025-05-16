@@ -1,0 +1,26 @@
+use this directory to make changes for the DOC vent source.
+  cd /mnt/lustre/letscher/jsl1063/my_cesm_code_invent
+  
+cp -R /mnt/lustre/letscher/shared/my_cesm_code /mnt/lustre/letscher/jsl1063/my_cesm_code_invent
+
+MARBL-cd /mnt/lustre/letscher/jsl1063/my_cesm_code_invent/components/pop/externals/MARBL/src
+  *marbl_interior_tendency_mod.F90
+  *marbl_settings_mod.F90 - for photooxidation = 40 yr
+  *marbl_interface_private_types.F90
+  *marbl_init_mod.F90
+  *marbl_diagnostics_mod.F90
+
+POP-cd /mnt/lustre/letscher/jsl1063/my_cesm_code_invent/components/pop/source
+  *ecosys_forcing_mod.F90
+
+YAML-cd /mnt/lustre/letscher/jsl1063/my_cesm_code_invent/components/pop/externals/MARBL/defaults
+  *diagnostics_latest.yaml
+  
+namelist-cd /mnt/lustre/letscher/jsl1063/my_cesm_code_invent/components/pop/bld
+  *namelist_defaults_pop.xml
+  *namelist_definition_pop.xml
+  *build-namelist.txt
+
+user_nl_pop_ventdoc_removal.x3Feinputs
+
+  
