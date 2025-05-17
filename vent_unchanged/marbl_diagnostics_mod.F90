@@ -1966,6 +1966,18 @@ contains
         return
       end if
 
+      lname = 'DOC Sediment Flux'
+      sname = 'DOCSEDFLUX'
+      units = 'nmol/cm^3/s'
+      vgrid = 'layer_avg'
+      truncate = .false.
+      call diags%add_diagnostic(lname, sname, units, vgrid, truncate,     &
+           ind%docventflux, marbl_status_log)
+      if (marbl_status_log%labort_marbl) then
+        call marbl_logging_add_diagnostics_error(marbl_status_log, sname, subname)
+        return
+      end if
+
       ! Particulate 2D diags
 
       write(particulate_flux_ref_depth_str, "(I0,A)") particulate_flux_ref_depth, 'm'
@@ -3051,7 +3063,8 @@ contains
     associate( POC     => marbl_particulate_share%POC, &
                P_CaCO3 => marbl_particulate_share%P_CaCO3 )
     call store_diagnostics_carbon_fluxes(domain, POC, P_CaCO3, interior_tendencies, &
-         marbl_tracer_indices, marbl_interior_tendency_diags, marbl_status_log)
+         marbl_tracer_indices, marbl_interior_tendency_diags, marbl_status_log), &
+         interior_tendency_forcings(interior_tendency_forcing_ind%docventflux_id)%field_1d(1,:))
     if (marbl_status_log%labort_marbl) then
       call marbl_status_log%log_error_trace('store_diagnostics_carbon_fluxes', subname)
       return
@@ -3953,7 +3966,7 @@ contains
   !***********************************************************************
 
   subroutine store_diagnostics_carbon_fluxes(marbl_domain, POC, P_CaCO3, interior_tendencies, &
-             marbl_tracer_indices, marbl_diags, marbl_status_log)
+             marbl_tracer_indices, marbl_diags, marbl_status_log, docventflux)
 
     use marbl_settings_mod, only : Jint_Ctot_thres
 
@@ -3964,6 +3977,7 @@ contains
     type(marbl_tracer_index_type)      , intent(in)    :: marbl_tracer_indices
     type(marbl_diagnostics_type)       , intent(inout) :: marbl_diags
     type(marbl_log_type)               , intent(inout) :: marbl_status_log
+    real(r8)                           , intent(in)    :: docventflux(:)          ! km
 
     !-----------------------------------------------------------------------
     !  local variables
@@ -3986,11 +4000,12 @@ contains
          docr_ind => marbl_tracer_indices%docr_ind &
          )
 
+    diags(ind%docventflux)%field_3d(:,1) = docventflux(:)
     ! vertical integrals
     work = interior_tendencies(dic_ind,:) + interior_tendencies(doc_ind,:) +             &
          interior_tendencies(docr_ind,:) +                                               &
          sum(interior_tendencies(marbl_tracer_indices%zoo_inds(:)%C_ind,:), dim=1) +     &
-         sum(interior_tendencies(marbl_tracer_indices%auto_inds(:)%C_ind,:),dim=1)
+         sum(interior_tendencies(marbl_tracer_indices%auto_inds(:)%C_ind,:),dim=1) + docventflux
 
     do auto_ind = 1, autotroph_cnt
        n = marbl_tracer_indices%auto_inds(auto_ind)%CaCO3_ind
