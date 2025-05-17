@@ -187,6 +187,7 @@ contains
     real (r8) :: Lig_deg(domain%km)          ! loss of Fe-binding Ligand from bacterial degradation
     real (r8) :: Lig_loss(domain%km)         ! loss of Fe-binding Ligand
     real (r8) :: totalChl_local(domain%km)   ! local value of totalChl
+    real (r8) :: docventflux(domain%km)   ! local value of docvent
 
     ! NOTE(bja, 2015-07) vectorization: arrays that are (n, k, c, i)
     ! probably can not be vectorized reasonably over c without memory
@@ -230,6 +231,7 @@ contains
          pressure            => interior_tendency_forcings(interior_tendency_forcing_indices%pressure_id)%field_1d(1,:), &
          salinity            => interior_tendency_forcings(interior_tendency_forcing_indices%salinity_id)%field_1d(1,:), &
          fesedflux           => interior_tendency_forcings(interior_tendency_forcing_indices%fesedflux_id)%field_1d(1,:),&
+         docventflux           => interior_tendency_forcings(interior_tendency_forcing_indices%docventflux_id)%field_1d(1,:),&
 
          po4_ind           => marbl_tracer_indices%po4_ind,         &
          no3_ind           => marbl_tracer_indices%no3_ind,         &
@@ -404,7 +406,7 @@ contains
          tracer_local(:,:), &
          o2_consumption_scalef(:), &
          o2_production(:), o2_consumption(:), &
-         interior_tendencies(:,:))
+         interior_tendencies(:,:), docventflux)
 
     ! Compute interior diagnostics
     call marbl_diagnostics_interior_tendency_compute(       &
@@ -2124,10 +2126,10 @@ contains
         if (k == 1) then
           do subcol_ind = 1, PAR_nsubcols
             if ((PAR_col_frac(subcol_ind) > c0) .and. (PAR_in(subcol_ind) > 1.0_r8)) then
-              work = PAR_col_frac(subcol_ind) * (log(PAR_in(subcol_ind))*0.4373_r8) * (10.0e2_r8/dz1)
-              DOCr_reminR = DOCr_reminR + work * DOMr_reminR_photo
-              DONr_reminR = DONr_reminR + work * DOMr_reminR_photo
-              DOPr_reminR = DOPr_reminR + work * DOMr_reminR_photo
+!              work = PAR_col_frac(subcol_ind) * (log(PAR_in(subcol_ind))*0.4373_r8) * (10.0e2_r8/dz1)
+              DOCr_reminR = DOMr_reminR_photo
+              DONr_reminR = DOMr_reminR_photo
+              DOPr_reminR = DOMr_reminR_photo
             endif
           end do
         endif
@@ -3350,7 +3352,7 @@ contains
        zooplankton_derived_terms, dissolved_organic_matter, nitrif, denitrif, sed_denitrif, &
        Fe_scavenge, Lig_prod, Lig_loss, P_iron_remin, POC_remin, POP_remin, P_SiO2_remin, &
        P_CaCO3_remin, P_CaCO3_ALT_CO2_remin, other_remin, PON_remin, tracer_local, &
-       o2_consumption_scalef, o2_production, o2_consumption, interior_tendencies)
+       o2_consumption_scalef, o2_production, o2_consumption, interior_tendencies, docventflux)
 
     integer,                              intent(in)    :: km
     type(marbl_tracer_index_type),        intent(in)    :: marbl_tracer_indices
@@ -3376,6 +3378,7 @@ contains
     real(r8),                             intent(out)   :: o2_production(km)
     real(r8),                             intent(out)   :: o2_consumption(km)
     real(r8),                             intent(inout) :: interior_tendencies(marbl_tracer_indices%total_cnt, km)
+    real(r8),                             intent(in)    :: docventflux(km)
 
     !-----------------------------------------------------------------------
     !  local variables
@@ -3563,7 +3566,7 @@ contains
         !  from sinking remin small fraction to refractory pool
         !-----------------------------------------------------------------------
 
-        interior_tendencies(doc_ind,k) = DOC_prod(k) * (c1 - DOCprod_refract) - DOC_remin(k)
+        interior_tendencies(doc_ind,k) = DOC_prod(k) * (c1 - DOCprod_refract) - DOC_remin(k) + docventflux(k)
 
         interior_tendencies(docr_ind,k) = DOC_prod(k) * DOCprod_refract - DOCr_remin(k) + (POC_remin(k) * POCremin_refract)
 
