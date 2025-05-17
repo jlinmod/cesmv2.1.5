@@ -3063,7 +3063,7 @@ contains
     associate( POC     => marbl_particulate_share%POC, &
                P_CaCO3 => marbl_particulate_share%P_CaCO3 )
     call store_diagnostics_carbon_fluxes(domain, POC, P_CaCO3, interior_tendencies, &
-         marbl_tracer_indices, marbl_interior_tendency_diags, marbl_status_log), &
+         marbl_tracer_indices, marbl_interior_tendency_diags, marbl_status_log, &
          interior_tendency_forcings(interior_tendency_forcing_ind%docventflux_id)%field_1d(1,:))
     if (marbl_status_log%labort_marbl) then
       call marbl_status_log%log_error_trace('store_diagnostics_carbon_fluxes', subname)
