@@ -4000,7 +4000,7 @@ contains
          docr_ind => marbl_tracer_indices%docr_ind &
          )
 
-    diags(ind%docventflux)%field_3d(:,1) = docventflux(:)
+    diags(ind%docventflux)%field_3d(1:kmt,1) = docventflux(1:kmt)
     ! vertical integrals
     work = interior_tendencies(dic_ind,:) + interior_tendencies(doc_ind,:) +             &
          interior_tendencies(docr_ind,:) +                                               &
