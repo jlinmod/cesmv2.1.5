@@ -1967,8 +1967,8 @@ contains
       end if
 
       lname = 'DOC Sediment Flux'
-      sname = 'DOCSEDFLUX'
-      units = 'nmol/cm^3/s'
+      sname = 'DOCVENTFLUX'
+      units = 'mmol/cm^3/s'
       vgrid = 'layer_avg'
       truncate = .false.
       call diags%add_diagnostic(lname, sname, units, vgrid, truncate,     &
