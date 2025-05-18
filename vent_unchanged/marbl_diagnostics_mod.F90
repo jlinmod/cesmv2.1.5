@@ -4016,7 +4016,7 @@ contains
 
     call marbl_diagnostics_share_compute_vertical_integrals(work, delta_z, kmt, &
          full_depth_integral=diags(ind%Jint_Ctot)%field_2d(1),                  &
-         integrated_terms = POC%sed_loss + P_CaCO3%sed_loss + docventflux)
+         integrated_terms = POC%sed_loss + P_CaCO3%sed_loss - docventflux)
 
     if (abs(diags(ind%Jint_Ctot)%field_2d(1)) .gt. Jint_Ctot_thres) then
        write(log_message,"(A,E11.3e3,A,E11.3e3)") &
