@@ -4005,7 +4005,7 @@ contains
     work = interior_tendencies(dic_ind,:) + interior_tendencies(doc_ind,:) +             &
          interior_tendencies(docr_ind,:) +                                               &
          sum(interior_tendencies(marbl_tracer_indices%zoo_inds(:)%C_ind,:), dim=1) +     &
-         sum(interior_tendencies(marbl_tracer_indices%auto_inds(:)%C_ind,:),dim=1) + docventflux(:)
+         sum(interior_tendencies(marbl_tracer_indices%auto_inds(:)%C_ind,:),dim=1)
 
     do auto_ind = 1, autotroph_cnt
        n = marbl_tracer_indices%auto_inds(auto_ind)%CaCO3_ind
@@ -4016,7 +4016,7 @@ contains
 
     call marbl_diagnostics_share_compute_vertical_integrals(work, delta_z, kmt, &
          full_depth_integral=diags(ind%Jint_Ctot)%field_2d(1),                  &
-         integrated_terms = POC%sed_loss + P_CaCO3%sed_loss)
+         integrated_terms = POC%sed_loss + P_CaCO3%sed_loss + docventflux)
 
     if (abs(diags(ind%Jint_Ctot)%field_2d(1)) .gt. Jint_Ctot_thres) then
        write(log_message,"(A,E11.3e3,A,E11.3e3)") &
